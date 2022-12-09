@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Renderer.h"
+#include "Mesh.h"
 
 namespace dae {
 
@@ -20,10 +21,24 @@ namespace dae {
 		{
 			std::cout << "DirectX initialization failed!\n";
 		}
+
+		std::vector<Vertex_PosCol> vertices{
+			{Vector3{0.f, 0.5f, 0.5f}, ColorRGB{1.f, 0.f, 0.f}},
+			{Vector3{0.5f, -0.5f, 0.5f}, ColorRGB{0.f, 0.f, 1.f}},
+			{Vector3{-0.5f, -0.5f, 0.5f}, ColorRGB{0.f, 1.f, 0.f}},
+		};
+
+		std::vector<uint32_t> indices{ 0, 1, 2 };
+
+		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
 	}
 
 	Renderer::~Renderer()
 	{
+
+		delete m_pMesh;
+		m_pMesh = nullptr;
+
 		if (m_pRenderTargetView) m_pRenderTargetView->Release();
 		if (m_pRenderTargetBuffer) m_pRenderTargetBuffer->Release();
 		if (m_pDepthStencilView) m_pDepthStencilView->Release();
@@ -54,7 +69,7 @@ namespace dae {
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
 		//2. Set Pipeline + Invoke Drawcalls (= render)
-
+		m_pMesh->Render(m_pDeviceContext);
 
 		//3. Present Backbuffer (swap)
 		m_pSwapChain->Present(0, 0);
@@ -100,7 +115,7 @@ namespace dae {
 
 		//Get Handle (HWND) from the SDL Backbuffer
 		SDL_SysWMinfo sysWMInfo{};
-		SDL_VERSION(&sysWMInfo.version);
+		SDL_VERSION(&sysWMInfo.version)
 		SDL_GetWindowWMInfo(m_pWindow, &sysWMInfo);
 		swapChainDesc.OutputWindow = sysWMInfo.info.win.window;
 
