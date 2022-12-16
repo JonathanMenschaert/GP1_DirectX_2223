@@ -1,7 +1,9 @@
 #pragma once
+#include "Effect.h"
+
 namespace dae
 {
-	class EffectPosTex
+	class EffectPosTex final : public Effect
 	{
 	public:
 
