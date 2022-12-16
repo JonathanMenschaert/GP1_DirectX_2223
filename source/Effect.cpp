@@ -11,10 +11,18 @@ namespace dae
 		{
 			std::wcout << L"Technique not valid\n";
 		}
+
+		m_pMatWorldViewProjVar = m_pEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+		if (!m_pMatWorldViewProjVar->IsValid())
+		{
+			std::wcout << L"m_pMatViewProjVar is not valid!\n";
+		}
 	}
 
 	Effect::~Effect()
 	{
+		m_pMatWorldViewProjVar->Release();
+		m_pMatWorldViewProjVar = nullptr;
 		m_pTechnique->Release();
 		m_pTechnique = nullptr;
 		m_pEffect->Release();
@@ -74,8 +82,14 @@ namespace dae
 	{
 		return m_pEffect;
 	}
+
 	ID3DX11EffectTechnique* Effect::GetTechnique() const
 	{
 		return m_pTechnique;
+	}
+
+	void Effect::SetMatrix(const Matrix& matrix)
+	{
+		m_pMatWorldViewProjVar->SetMatrix(reinterpret_cast<const float*>(&matrix));
 	}
 }

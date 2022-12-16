@@ -22,14 +22,15 @@ namespace dae {
 			std::cout << "DirectX initialization failed!\n";
 		}
 
-		std::vector<Vertex_PosCol> vertices{
-			{Vector3{0.f, 0.5f, 0.5f}, ColorRGB{1.f, 0.f, 0.f}},
-			{Vector3{0.5f, -0.5f, 0.5f}, ColorRGB{0.f, 0.f, 1.f}},
-			{Vector3{-0.5f, -0.5f, 0.5f}, ColorRGB{0.f, 1.f, 0.f}},
+		std::vector<Vertex> vertices{
+			{Vector3{0.f, 3.f, 2.f}, ColorRGB{1.f, 0.f, 0.f}},
+			{Vector3{3.f, -3.f, 2.f}, ColorRGB{0.f, 0.f, 1.f}},
+			{Vector3{-3.f, -3.f, 2.f}, ColorRGB{0.f, 1.f, 0.f}},
 		};
 
 		std::vector<uint32_t> indices{ 0, 1, 2 };
-
+		m_AspectRatio = static_cast<float>(m_Width) / m_Height;
+		m_Camera.Initialize(45.f, { 0.f,0.f,-10.f }, m_AspectRatio);
 		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
 	}
 
@@ -55,7 +56,8 @@ namespace dae {
 
 	void Renderer::Update(const Timer* pTimer)
 	{
-
+		m_Camera.Update(pTimer);
+		m_pMesh->SetMatrix(m_Camera.viewMatrix * m_Camera.projectionMatrix);
 	}
 
 

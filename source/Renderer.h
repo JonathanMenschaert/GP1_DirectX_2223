@@ -1,4 +1,6 @@
 #pragma once
+#include "Camera.h"
+
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -26,9 +28,13 @@ namespace dae
 		int m_Width{};
 		int m_Height{};
 
+		float m_AspectRatio{};
+
 		bool m_IsInitialized{ false };
 
 		Mesh* m_pMesh{ nullptr };
+
+		Camera m_Camera{};
 
 		//DIRECTX
 		HRESULT InitializeDirectX();

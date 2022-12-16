@@ -2,18 +2,23 @@
 
 namespace dae
 {
-	struct Vertex_PosCol final
+	/*struct Vertex_PosCol final
 	{
 		Vector3 position;
 		ColorRGB color;
+	};*/
+
+	struct Vertex final
+	{
+		Vector3 position;
+		Vector2 uv;
 	};
 
-
-	class Effect;
+	class EffectPosCol;
 	class Mesh final
 	{
 	public:
-		Mesh(ID3D11Device* pDevice, std::vector<Vertex_PosCol>& vertices, std::vector<uint32_t>& indices);
+		Mesh(ID3D11Device* pDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 		~Mesh();
 
 		Mesh(const Mesh&) = delete;
@@ -22,9 +27,10 @@ namespace dae
 		Mesh& operator=(Mesh&&) noexcept = delete;
 
 		void Render(ID3D11DeviceContext* pDeviceContext) const;
+		void SetMatrix(const Matrix& matrix);
 
 	private:
-		Effect* m_pEffect{ nullptr };
+		EffectPosCol* m_pEffect{ nullptr };
 		ID3D11Buffer* m_pVertexBuffer{ nullptr };
 		ID3D11Buffer* m_pIndexBuffer{ nullptr };
 		ID3D11InputLayout* m_pInputLayout{ nullptr };
