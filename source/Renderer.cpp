@@ -93,6 +93,53 @@ namespace dae {
 
 	}
 
+	void Renderer::CycleSampleState()
+	{
+		int state{ static_cast<int>(m_SamplerState) + 1};
+		int count{ static_cast<int>(SampleState::COUNT) };
+		m_SamplerState = static_cast<SampleState>(state % count);
+
+		if (m_pSamplerState) m_pSamplerState->Release();
+
+		D3D11_SAMPLER_DESC sampleDesc{};
+		sampleDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampleDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampleDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampleDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampleDesc.MipLODBias = 0;
+		sampleDesc.MinLOD = 0;
+		sampleDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		sampleDesc.MaxAnisotropy = 16;
+
+		switch (m_SamplerState)
+		{
+		case SampleState::POINT:
+			sampleDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+			std::wcout << L"Sampler state: Point\n";
+			break;
+		case SampleState::LINEAR:
+			sampleDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			std::wcout << L"Sampler state: Linear\n";
+			break;
+		case SampleState::ANISOTROPIC:
+			sampleDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			std::wcout << L"Sampler state: Anisotropic\n";
+			break;
+		default:
+			std::wcout << L"Invalid Sampler state\n";
+			break;
+		}
+
+		HRESULT result = m_pDevice->CreateSamplerState(&sampleDesc, &m_pSamplerState);
+		if (FAILED(result))
+		{
+			std::wcout << L"Failed to update Sampler State!\n";
+		}
+
+		m_pMesh->UpdateSampleState(m_pSamplerState);
+
+	}
+
 	HRESULT Renderer::InitializeDirectX()
 	{
 		//1. Create Device & DeviceContext

@@ -61,6 +61,25 @@ namespace dae
 		if (m_pVertexBuffer) m_pVertexBuffer->Release();		
 		if (m_pInputLayout) m_pInputLayout->Release();		
 	}
+
+
+	void Mesh::UpdateSampleState(ID3D11SamplerState* pSampleState)
+	{
+		ID3DX11EffectSamplerVariable* pSamplerEffect{ m_pEffect->GetEffect()->GetVariableByName("gSampleState")->AsSampler() };
+		HRESULT result{ pSamplerEffect->SetSampler(0, pSampleState) };
+		if (FAILED(result))
+		{
+			std::wcout << L"Failed to update mesh sampler state\n";
+			return;
+		}
+	}
+
+
+	void Mesh::RotateY(float angle)
+	{
+	}
+
+
 	void Mesh::Render(ID3D11DeviceContext* pDeviceContext) const
 	{
 		//1. Set Primitive Topology
@@ -87,6 +106,7 @@ namespace dae
 			pDeviceContext->DrawIndexed(m_NumIndices, 0, 0);
 		}
 	}
+
 	void Mesh::SetMatrix(const Matrix& matrix)
 	{
 		m_pEffect->SetMatrix(matrix);

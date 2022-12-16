@@ -4,7 +4,7 @@
 float4x4 gWorldViewProj : WorldViewProjection;
 Texture2D gDiffuseMap : DiffuseMap;
 
-SamplerState gSampleState
+SamplerState gSampleState : SampleState
 {
 	Filter = MIN_MAG_MIP_POINT;
 	AddressU = WRAP;

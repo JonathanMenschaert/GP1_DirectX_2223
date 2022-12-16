@@ -28,7 +28,7 @@ namespace dae
 		Mesh& operator=(const Mesh&) = delete;
 		Mesh& operator=(Mesh&&) noexcept = delete;
 
-
+		void UpdateSampleState(ID3D11SamplerState* pSampleState);
 		void RotateY(float angle);
 		void Render(ID3D11DeviceContext* pDeviceContext) const;
 		void SetMatrix(const Matrix& matrix);
