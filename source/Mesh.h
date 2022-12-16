@@ -41,6 +41,8 @@ namespace dae
 
 		uint32_t m_NumIndices{};
 		Texture* m_pDiffuse{ nullptr };
+
+		Matrix m_RotationMatrix{};
 	};
 }
 

@@ -9,7 +9,10 @@ namespace dae
 	Mesh::Mesh(ID3D11Device* pDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 		:m_pEffect{new EffectPosTex(pDevice, L"Resources/PosTex3D.fx")}
 	{
-		m_pDiffuse = Texture::LoadFromFile(pDevice, "Resources/uv_grid_2.png");
+
+		m_RotationMatrix = Matrix::CreateRotation(Vector3{ 0.f, 0.f, 0.f });
+
+		m_pDiffuse = Texture::LoadFromFile(pDevice, "Resources/vehicle_diffuse.png");
 		m_pEffect->SetDiffuseMap(m_pDiffuse);
 		m_pInputLayout = m_pEffect->CreateInputLayout(pDevice);
 
@@ -77,6 +80,7 @@ namespace dae
 
 	void Mesh::RotateY(float angle)
 	{
+		m_RotationMatrix = Matrix::CreateRotationY(angle) * m_RotationMatrix;
 	}
 
 
@@ -109,6 +113,6 @@ namespace dae
 
 	void Mesh::SetMatrix(const Matrix& matrix)
 	{
-		m_pEffect->SetMatrix(matrix);
+		m_pEffect->SetMatrix(m_RotationMatrix * matrix);
 	}
 }

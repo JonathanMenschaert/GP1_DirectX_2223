@@ -63,5 +63,7 @@ namespace dae
 
 		ID3D11SamplerState* m_pSamplerState{ nullptr };
 		//...
+
+		const float m_RotationSpeed{ TO_RADIANS * 45.f };
 	};
 }

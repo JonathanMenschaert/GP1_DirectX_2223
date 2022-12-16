@@ -1,6 +1,8 @@
 #pragma once
 #include <fstream>
 #include "Math.h"
+#include <vector>
+#include "Mesh.h"
 
 namespace dae
 {
@@ -9,7 +11,7 @@ namespace dae
 		//Just parses vertices and indices
 #pragma warning(push)
 #pragma warning(disable : 4505) //Warning unreferenced local function
-		static bool ParseOBJ(const std::string& filename, std::vector<Vertex_In>& vertices, std::vector<uint32_t>& indices, bool flipAxisAndWinding = true)
+		static bool ParseOBJ(const std::string& filename, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, bool flipAxisAndWinding = true)
 		{
 			std::ifstream file(filename);
 			if (!file)
@@ -64,7 +66,7 @@ namespace dae
 					//add the material index as attibute to the attribute array
 					//
 					// Faces or triangles
-					Vertex_In vertex{};
+					Vertex vertex{};
 					size_t iPosition, iTexCoord, iNormal;
 
 					uint32_t tempIndices[3];
@@ -91,7 +93,7 @@ namespace dae
 
 								// Optional vertex normal
 								file >> iNormal;
-								vertex.normal = normals[iNormal - 1];
+								//vertex.normal = normals[iNormal - 1];
 							}
 						}
 
@@ -101,7 +103,7 @@ namespace dae
 					}
 
 					indices.push_back(tempIndices[0]);
-					if (flipAxisAndWinding) 
+					if (flipAxisAndWinding)
 					{
 						indices.push_back(tempIndices[2]);
 						indices.push_back(tempIndices[1]);
@@ -137,21 +139,21 @@ namespace dae
 				float r = 1.f / Vector2::Cross(diffX, diffY);
 
 				Vector3 tangent = (edge0 * diffY.y - edge1 * diffY.x) * r;
-				vertices[index0].tangent += tangent;
+				/*vertices[index0].tangent += tangent;
 				vertices[index1].tangent += tangent;
-				vertices[index2].tangent += tangent;
+				vertices[index2].tangent += tangent;*/
 			}
 
 			//Create the Tangents (reject)
 			for (auto& v : vertices)
 			{
-				v.tangent = Vector3::Reject(v.tangent, v.normal).Normalized();
+				//v.tangent = Vector3::Reject(v.tangent, v.normal).Normalized();
 
-				if(flipAxisAndWinding)
+				if (flipAxisAndWinding)
 				{
 					v.position.z *= -1.f;
-					v.normal.z *= -1.f;
-					v.tangent.z *= -1.f;
+					//v.normal.z *= -1.f;
+					//v.tangent.z *= -1.f;
 				}
 
 			}

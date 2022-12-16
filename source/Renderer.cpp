@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "Mesh.h"
+#include "Utils.h"
 
 namespace dae {
 
@@ -22,30 +23,12 @@ namespace dae {
 			std::cout << "DirectX initialization failed!\n";
 		}
 
-		std::vector<Vertex> vertices{
-			Vertex{Vector3{-3.f, 3.f, -2.f}, Vector2{0.f, 0.f}},
-			Vertex{Vector3{0.f, 3.f, -2.f}, Vector2{0.5f, 0.f}},
-			Vertex{Vector3{3.f, 3.f, -2.f}, Vector2{1.f, 0.f}},
-			Vertex{Vector3{-3.f, 0.f, -2.f}, Vector2{0.f, 0.5f}},
-			Vertex{Vector3{0.f, 0.f, -2.f}, Vector2{0.5f, 0.5f}},
-			Vertex{Vector3{3.f, 0.f, -2.f}, Vector2{1.f, 0.5f}},
-			Vertex{Vector3{-3.f, -3.f, -2.f}, Vector2{0.f, 1.f}},
-			Vertex{Vector3{0.f, -3.f, -2.f}, Vector2{0.5f, 1.f}},
-			Vertex{Vector3{3.f, -3.f, -2.f}, Vector2{1.f, 1.f}}
-		};
+		std::vector<Vertex> vertices{};
+		std::vector<uint32_t> indices{};
+		Utils::ParseOBJ("Resources/vehicle.obj", vertices, indices);
 
-		std::vector<uint32_t> indices{ 
-			3, 0, 1,
-			1, 4, 3,
-			4, 1, 2, 
-			2, 5, 4,
-			6, 3, 4, 
-			4, 7, 6,
-			7, 4, 5, 
-			5, 8, 7
-		};
 		m_AspectRatio = static_cast<float>(m_Width) / m_Height;
-		m_Camera.Initialize(45.f, { 0.f,0.f,-15.f }, m_AspectRatio);
+		m_Camera.Initialize(45.f, { 0.f,0.f,-50.f }, m_AspectRatio);
 		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
 	}
 
@@ -54,7 +37,7 @@ namespace dae {
 
 		delete m_pMesh;
 		m_pMesh = nullptr;
-
+		if (m_pSamplerState) m_pSamplerState->Release();
 		if (m_pRenderTargetView) m_pRenderTargetView->Release();
 		if (m_pRenderTargetBuffer) m_pRenderTargetBuffer->Release();
 		if (m_pDepthStencilView) m_pDepthStencilView->Release();
@@ -72,6 +55,7 @@ namespace dae {
 	void Renderer::Update(const Timer* pTimer)
 	{
 		m_Camera.Update(pTimer);
+		m_pMesh->RotateY(pTimer->GetElapsed() * m_RotationSpeed);
 		m_pMesh->SetMatrix(m_Camera.viewMatrix * m_Camera.projectionMatrix);
 	}
 
