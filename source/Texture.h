@@ -13,6 +13,8 @@ namespace dae
 
 		ID3D11ShaderResourceView* GetSRV() const;
 
+		
+
 		static Texture* LoadFromFile(ID3D11Device* pDevice, const std::string& path);
 
 	private:

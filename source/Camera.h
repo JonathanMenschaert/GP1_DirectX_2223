@@ -78,7 +78,7 @@ namespace dae
 
 			//Camera Update Logic
 			const float linearSpeed{ 10.f };
-			const float rotationSpeed{ 50.f };
+			const float rotationSpeed{ 500.f };
 
 			//Keyboard Input
 			const uint8_t* pKeyboardState = SDL_GetKeyboardState(nullptr);
@@ -107,8 +107,8 @@ namespace dae
 				//Invert mouse Y
 				mouseY *= -1;
 
-				origin += forward * speedModifier * (mouseState == SDL_BUTTON_LMASK) * static_cast<float>(mouseY);
-				origin += Vector3::UnitY * speedModifier * (mouseState == (SDL_BUTTON_RMASK | SDL_BUTTON_LMASK)) * static_cast<float>(mouseY);
+				origin += forward * rotationSpeed * speedModifier * (mouseState == SDL_BUTTON_LMASK) * static_cast<float>(mouseY);
+				origin += Vector3::UnitY * rotationSpeed * speedModifier * (mouseState == (SDL_BUTTON_RMASK | SDL_BUTTON_LMASK)) * static_cast<float>(mouseY);
 				totalPitch += static_cast<float>(mouseY) * TO_RADIANS * (mouseState == SDL_BUTTON_RMASK) * rotationModifier;
 				totalYaw += static_cast<float>(mouseX) * TO_RADIANS *
 					(mouseState & SDL_BUTTON_LMASK || mouseState & SDL_BUTTON_RMASK) * rotationModifier;

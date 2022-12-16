@@ -15,6 +15,8 @@ namespace dae
 	};
 
 	class EffectPosCol;
+	class EffectPosTex;
+	class Texture;
 	class Mesh final
 	{
 	public:
@@ -26,16 +28,19 @@ namespace dae
 		Mesh& operator=(const Mesh&) = delete;
 		Mesh& operator=(Mesh&&) noexcept = delete;
 
+
+		void RotateY(float angle);
 		void Render(ID3D11DeviceContext* pDeviceContext) const;
 		void SetMatrix(const Matrix& matrix);
 
 	private:
-		EffectPosCol* m_pEffect{ nullptr };
+		EffectPosTex* m_pEffect{ nullptr };
 		ID3D11Buffer* m_pVertexBuffer{ nullptr };
 		ID3D11Buffer* m_pIndexBuffer{ nullptr };
 		ID3D11InputLayout* m_pInputLayout{ nullptr };
 
 		uint32_t m_NumIndices{};
+		Texture* m_pDiffuse{ nullptr };
 	};
 }
 

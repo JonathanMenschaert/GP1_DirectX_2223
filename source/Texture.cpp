@@ -5,7 +5,6 @@ namespace dae
 {
 	Texture::Texture(ID3D11Device* pDevice, SDL_Surface* pSurface)
 	{
-
 		//Create Resource
 		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		D3D11_TEXTURE2D_DESC desc{};
@@ -54,15 +53,22 @@ namespace dae
 	{
 		if (m_pSRV) m_pSRV->Release();
 		if (m_pResource) m_pResource->Release();
+
 	}
 
-	ID3D11ShaderResourceView* Texture::GetShaderResourceView() const
+	ID3D11ShaderResourceView* Texture::GetSRV() const
 	{
 		return m_pSRV;
 	}
 
 	Texture* Texture::LoadFromFile(ID3D11Device* pDevice, const std::string& path)
 	{
-		return new Texture(pDevice, IMG_Load(path.c_str()));
+		SDL_Surface* pSurface{ IMG_Load(path.c_str()) };
+		if (!pSurface)
+		{
+			std::wcout << L"Texture surface creation failed!\n";
+			return nullptr;
+		}
+		return new Texture(pDevice, pSurface);
 	}
 }

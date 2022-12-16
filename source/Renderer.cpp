@@ -23,14 +23,29 @@ namespace dae {
 		}
 
 		std::vector<Vertex> vertices{
-			{Vector3{0.f, 3.f, 2.f}, ColorRGB{1.f, 0.f, 0.f}},
-			{Vector3{3.f, -3.f, 2.f}, ColorRGB{0.f, 0.f, 1.f}},
-			{Vector3{-3.f, -3.f, 2.f}, ColorRGB{0.f, 1.f, 0.f}},
+			Vertex{Vector3{-3.f, 3.f, -2.f}, Vector2{0.f, 0.f}},
+			Vertex{Vector3{0.f, 3.f, -2.f}, Vector2{0.5f, 0.f}},
+			Vertex{Vector3{3.f, 3.f, -2.f}, Vector2{1.f, 0.f}},
+			Vertex{Vector3{-3.f, 0.f, -2.f}, Vector2{0.f, 0.5f}},
+			Vertex{Vector3{0.f, 0.f, -2.f}, Vector2{0.5f, 0.5f}},
+			Vertex{Vector3{3.f, 0.f, -2.f}, Vector2{1.f, 0.5f}},
+			Vertex{Vector3{-3.f, -3.f, -2.f}, Vector2{0.f, 1.f}},
+			Vertex{Vector3{0.f, -3.f, -2.f}, Vector2{0.5f, 1.f}},
+			Vertex{Vector3{3.f, -3.f, -2.f}, Vector2{1.f, 1.f}}
 		};
 
-		std::vector<uint32_t> indices{ 0, 1, 2 };
+		std::vector<uint32_t> indices{ 
+			3, 0, 1,
+			1, 4, 3,
+			4, 1, 2, 
+			2, 5, 4,
+			6, 3, 4, 
+			4, 7, 6,
+			7, 4, 5, 
+			5, 8, 7
+		};
 		m_AspectRatio = static_cast<float>(m_Width) / m_Height;
-		m_Camera.Initialize(45.f, { 0.f,0.f,-10.f }, m_AspectRatio);
+		m_Camera.Initialize(45.f, { 0.f,0.f,-15.f }, m_AspectRatio);
 		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
 	}
 

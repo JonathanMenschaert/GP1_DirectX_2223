@@ -2,37 +2,16 @@
 #include "Mesh.h"
 #include "Effect.h"
 #include "EffectPosCol.h"
+#include "EffectPosTex.h"
+#include "Texture.h"
 namespace dae
 {
 	Mesh::Mesh(ID3D11Device* pDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
-		:m_pEffect{new EffectPosCol(pDevice, L"Resources/PosCol3D.fx")}
+		:m_pEffect{new EffectPosTex(pDevice, L"Resources/PosTex3D.fx")}
 	{
+		m_pDiffuse = Texture::LoadFromFile(pDevice, "Resources/uv_grid_2.png");
+		m_pEffect->SetDiffuseMap(m_pDiffuse);
 		m_pInputLayout = m_pEffect->CreateInputLayout(pDevice);
-
-		//Create Vertex Layout
-		//static constexpr uint32_t numElements{ 2 };
-		//D3D11_INPUT_ELEMENT_DESC vertexDesc[numElements]{};
-		//vertexDesc[0].SemanticName = "POSITION";
-		//vertexDesc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-		//vertexDesc[0].AlignedByteOffset = 0;
-		//vertexDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-
-		//vertexDesc[1].SemanticName = "COLOR";
-		//vertexDesc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-		//vertexDesc[1].AlignedByteOffset = 12;
-		//vertexDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-
-		////Create Input Layout
-		//D3DX11_PASS_DESC passDesc{};
-		//m_pEffect->GetTechnique()->GetPassByIndex(0)->GetDesc(&passDesc);
-
-		//HRESULT result = pDevice->CreateInputLayout(
-		//	vertexDesc,
-		//	numElements,
-		//	passDesc.pIAInputSignature,
-		//	passDesc.IAInputSignatureSize,
-		//	&m_pInputLayout
-		//);
 
 		//Create Vertex Buffer
 		D3D11_BUFFER_DESC bd{};
@@ -74,6 +53,9 @@ namespace dae
 	{
 		delete m_pEffect;
 		m_pEffect = nullptr;
+
+		delete m_pDiffuse;
+		m_pDiffuse = nullptr;
 
 		if (m_pIndexBuffer) m_pIndexBuffer->Release();		
 		if (m_pVertexBuffer) m_pVertexBuffer->Release();		
