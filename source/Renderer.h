@@ -18,6 +18,7 @@ namespace dae
 	};
 
 	class Mesh;
+	class Texture;
 	class Renderer final
 	{
 	public:
@@ -44,7 +45,7 @@ namespace dae
 
 		bool m_IsInitialized{ false };
 
-		Mesh* m_pMesh{ nullptr };
+		std::vector<Mesh*> m_Meshes{ };
 		Camera m_Camera{};
 
 		SampleState m_SamplerState{ SampleState::POINT };
@@ -65,5 +66,10 @@ namespace dae
 		//...
 
 		const float m_RotationSpeed{ TO_RADIANS * 45.f };
+
+		Texture* m_pDiffuse{ nullptr };
+		Texture* m_pNormal{ nullptr };
+		Texture* m_pSpecular{ nullptr };
+		Texture* m_pGlossiness{ nullptr };
 	};
 }

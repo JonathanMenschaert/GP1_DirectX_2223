@@ -60,6 +60,12 @@
     <ClInclude Include="Utils.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="EffectShader.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectTransparant.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -94,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectShader.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectTransparant.cpp">
+      <Filter>Effects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

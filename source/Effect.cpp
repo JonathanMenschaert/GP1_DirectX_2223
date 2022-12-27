@@ -17,16 +17,46 @@ namespace dae
 		{
 			std::wcout << L"m_pMatViewProjVar is not valid!\n";
 		}
+
+		m_pMatWorldVar = m_pEffect->GetVariableByName("gWorld")->AsMatrix();
+		if (!m_pMatWorldVar->IsValid())
+		{
+			std::wcout << L"m_pMatWorldVar is not valid!\n";
+		}
+		m_pMatViewInverseVar = m_pEffect->GetVariableByName("gViewInverse")->AsMatrix();
+		if (!m_pMatViewInverseVar->IsValid())
+		{
+			std::wcout << L"m_pMatViewInverseVar is not valid!\n";
+		}
 	}
 
 	Effect::~Effect()
 	{
-		m_pMatWorldViewProjVar->Release();
-		m_pMatWorldViewProjVar = nullptr;
-		m_pTechnique->Release();
-		m_pTechnique = nullptr;
-		m_pEffect->Release();
-		m_pEffect = nullptr;
+		if (m_pMatWorldViewProjVar)
+		{
+			m_pMatWorldViewProjVar->Release();
+			m_pMatWorldViewProjVar = nullptr;
+		}
+		if (m_pMatWorldVar)
+		{
+			m_pMatWorldVar->Release();
+			m_pMatWorldVar = nullptr;
+		}
+		if (m_pMatViewInverseVar)
+		{
+			m_pMatViewInverseVar->Release();
+			m_pMatViewInverseVar = nullptr;
+		}
+		if (m_pTechnique)
+		{
+			m_pTechnique->Release();
+			m_pTechnique = nullptr;
+		}
+		if (m_pEffect)
+		{
+			m_pEffect->Release();
+			m_pEffect = nullptr;
+		}
 	}
 
 	ID3DX11Effect* Effect::LoadEffect(ID3D11Device* pDevice, const std::wstring& assetFile)
@@ -88,8 +118,17 @@ namespace dae
 		return m_pTechnique;
 	}
 
-	void Effect::SetMatrix(const Matrix& matrix)
+	void Effect::SetViewProjectionMatrix(const Matrix& matrix)
 	{
 		m_pMatWorldViewProjVar->SetMatrix(reinterpret_cast<const float*>(&matrix));
+	}
+
+	void Effect::SetWorldMatrix(const Matrix& matrix)
+	{
+		m_pMatWorldVar->SetMatrix(reinterpret_cast<const float*>(&matrix));
+	}
+	void Effect::SetViewInverseMatrix(const Matrix& matrix)
+	{
+		m_pMatViewInverseVar->SetMatrix(reinterpret_cast<const float*>(&matrix));
 	}
 }

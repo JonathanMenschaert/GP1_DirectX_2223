@@ -3,17 +3,15 @@
 #include "Effect.h"
 #include "EffectPosCol.h"
 #include "EffectPosTex.h"
+#include "EffectShader.h"
 #include "Texture.h"
 namespace dae
 {
-	Mesh::Mesh(ID3D11Device* pDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
-		:m_pEffect{new EffectPosTex(pDevice, L"Resources/PosTex3D.fx")}
+	Mesh::Mesh(ID3D11Device* pDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, Effect* pEffect)
+		: m_pEffect{pEffect}
 	{
-
 		m_RotationMatrix = Matrix::CreateRotation(Vector3{ 0.f, 0.f, 0.f });
 
-		m_pDiffuse = Texture::LoadFromFile(pDevice, "Resources/vehicle_diffuse.png");
-		m_pEffect->SetDiffuseMap(m_pDiffuse);
 		m_pInputLayout = m_pEffect->CreateInputLayout(pDevice);
 
 		//Create Vertex Buffer
@@ -54,12 +52,7 @@ namespace dae
 
 	Mesh::~Mesh()
 	{
-		delete m_pEffect;
-		m_pEffect = nullptr;
-
-		delete m_pDiffuse;
-		m_pDiffuse = nullptr;
-
+		if (m_pEffect) delete m_pEffect;
 		if (m_pIndexBuffer) m_pIndexBuffer->Release();		
 		if (m_pVertexBuffer) m_pVertexBuffer->Release();		
 		if (m_pInputLayout) m_pInputLayout->Release();		
@@ -111,8 +104,10 @@ namespace dae
 		}
 	}
 
-	void Mesh::SetMatrix(const Matrix& matrix)
+	void Mesh::SetMatrices(const Matrix& viewProjMatrix, const Matrix& inverseViewMatrix)
 	{
-		m_pEffect->SetMatrix(m_RotationMatrix * matrix);
+		m_pEffect->SetViewProjectionMatrix(m_RotationMatrix * viewProjMatrix);
+		m_pEffect->SetWorldMatrix(m_RotationMatrix);
+		m_pEffect->SetViewInverseMatrix(inverseViewMatrix);
 	}
 }

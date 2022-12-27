@@ -83,6 +83,8 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectPosCol.h" />
     <ClInclude Include="EffectPosTex.h" />
+    <ClInclude Include="EffectShader.h" />
+    <ClInclude Include="EffectTransparant.h" />
     <ClInclude Include="MathHelpers.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
@@ -100,6 +102,8 @@
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectPosCol.cpp" />
     <ClCompile Include="EffectPosTex.cpp" />
+    <ClCompile Include="EffectShader.cpp" />
+    <ClCompile Include="EffectTransparant.cpp" />
     <ClCompile Include="Matrix.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>

@@ -2,6 +2,9 @@
 #include "Renderer.h"
 #include "Mesh.h"
 #include "Utils.h"
+#include "Texture.h"
+#include "EffectShader.h";
+#include "EffectTransparant.h"
 
 namespace dae {
 
@@ -25,18 +28,53 @@ namespace dae {
 
 		std::vector<Vertex> vertices{};
 		std::vector<uint32_t> indices{};
-		Utils::ParseOBJ("Resources/vehicle.obj", vertices, indices);
+		
 
 		m_AspectRatio = static_cast<float>(m_Width) / m_Height;
 		m_Camera.Initialize(45.f, { 0.f,0.f,-50.f }, m_AspectRatio);
-		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
+
+		//Vehicle 
+		Utils::ParseOBJ("Resources/vehicle.obj", vertices, indices);
+		EffectShader* pVehicleEffect{ new EffectShader(m_pDevice, L"Resources/Shader3D.fx")};
+
+		m_pDiffuse = Texture::LoadFromFile(m_pDevice, "Resources/vehicle_diffuse.png");
+		m_pNormal = Texture::LoadFromFile(m_pDevice, "Resources/vehicle_normal.png");
+		m_pSpecular = Texture::LoadFromFile(m_pDevice, "Resources/vehicle_specular.png");
+		m_pGlossiness = Texture::LoadFromFile(m_pDevice, "Resources/vehicle_gloss.png");
+
+		pVehicleEffect->SetDiffuseMap(m_pDiffuse);
+		pVehicleEffect->SetNormalMap(m_pNormal);
+		pVehicleEffect->SetSpecularMap(m_pSpecular);
+		pVehicleEffect->SetGlossinessMap(m_pGlossiness);
+
+		delete m_pDiffuse;
+		delete m_pNormal;
+		delete m_pSpecular;
+		delete m_pGlossiness;
+
+		m_Meshes.push_back(new Mesh{ m_pDevice, vertices, indices, pVehicleEffect });
+
+		vertices.clear();
+		indices.clear();
+
+		//Fire Combustion
+		Utils::ParseOBJ("Resources/fireFx.obj", vertices, indices);
+		EffectTransparant* pCombustionEffect{ new EffectTransparant(m_pDevice, L"Resources/Transparant3D.fx") };
+		m_pDiffuse = Texture::LoadFromFile(m_pDevice, "Resources/fireFX_diffuse.png");
+		pCombustionEffect->SetDiffuseMap(m_pDiffuse);
+
+		m_Meshes.push_back(new Mesh{ m_pDevice, vertices, indices, pCombustionEffect });
+		delete m_pDiffuse;
 	}
 
 	Renderer::~Renderer()
 	{
+		for (Mesh* pMesh : m_Meshes)
+		{
+			delete pMesh;
+		}
+		m_Meshes.clear();
 
-		delete m_pMesh;
-		m_pMesh = nullptr;
 		if (m_pSamplerState) m_pSamplerState->Release();
 		if (m_pRenderTargetView) m_pRenderTargetView->Release();
 		if (m_pRenderTargetBuffer) m_pRenderTargetBuffer->Release();
@@ -55,8 +93,11 @@ namespace dae {
 	void Renderer::Update(const Timer* pTimer)
 	{
 		m_Camera.Update(pTimer);
-		m_pMesh->RotateY(pTimer->GetElapsed() * m_RotationSpeed);
-		m_pMesh->SetMatrix(m_Camera.viewMatrix * m_Camera.projectionMatrix);
+		for (Mesh* pMesh : m_Meshes)
+		{
+			pMesh->RotateY(pTimer->GetElapsed() * m_RotationSpeed);
+			pMesh->SetMatrices(m_Camera.viewMatrix * m_Camera.projectionMatrix, m_Camera.invViewMatrix);
+		}
 	}
 
 
@@ -70,13 +111,18 @@ namespace dae {
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
 		//2. Set Pipeline + Invoke Drawcalls (= render)
-		m_pMesh->Render(m_pDeviceContext);
+		for (Mesh* pMesh : m_Meshes)
+		{
+			pMesh->Render(m_pDeviceContext);
+		}
 
 		//3. Present Backbuffer (swap)
 		m_pSwapChain->Present(0, 0);
 
 	}
 
+
+	//SamplerState descriptor: https://learn.microsoft.com/en-us/windows/win32/api/d3d11/ns-d3d11-d3d11_sampler_desc
 	void Renderer::CycleSampleState()
 	{
 		int state{ static_cast<int>(m_SamplerState) + 1};
@@ -120,8 +166,10 @@ namespace dae {
 			std::wcout << L"Failed to update Sampler State!\n";
 		}
 
-		m_pMesh->UpdateSampleState(m_pSamplerState);
-
+		for (Mesh* pMesh : m_Meshes)
+		{
+			pMesh->UpdateSampleState(m_pSamplerState);
+		}
 	}
 
 	HRESULT Renderer::InitializeDirectX()

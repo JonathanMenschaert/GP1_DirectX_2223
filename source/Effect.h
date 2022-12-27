@@ -22,12 +22,16 @@ namespace dae
 
 		virtual ID3D11InputLayout* CreateInputLayout(ID3D11Device* pDevice) const = 0;
 
-		void SetMatrix(const Matrix& matrix);
+		void SetViewProjectionMatrix(const Matrix& matrix);
+		void SetWorldMatrix(const Matrix& matrix);
+		void SetViewInverseMatrix(const Matrix& matrix);
 	protected:
 
 		ID3DX11Effect* m_pEffect{ nullptr };
 		ID3DX11EffectTechnique* m_pTechnique{ nullptr };
 		ID3DX11EffectMatrixVariable* m_pMatWorldViewProjVar{ nullptr };
+		ID3DX11EffectMatrixVariable* m_pMatWorldVar{ nullptr };
+		ID3DX11EffectMatrixVariable* m_pMatViewInverseVar{ nullptr };
 	};
 }
 
